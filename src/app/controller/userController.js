@@ -1,6 +1,6 @@
 import userRepository from "../repository/userRepository.js";
 
-const {createUser, showAllUsers} = new userRepository();
+const {createUser, showAllUsers, deleteUser} = new userRepository();
 
 class userController{
     async createController(req, res) {
@@ -27,7 +27,23 @@ class userController{
             })
             // console.error(error);
         }
-        
+    }
+
+    async deleteController(req, res) {
+        try {
+            const {name, email} = req.body;
+            if (name === null || email === null) {
+                return res.status(400).json({message: 'Nome e Email obrigatórios ao deletar!'})
+            };
+            const user = await deleteUser(name, email);
+            res.status(200).json(user.message)
+
+        } catch (error) {
+            res.status(500).json({
+                message: 'Controller: Erro ao deletar usuário!',
+                error: error.message
+            })
+        }
     }
 }
 
