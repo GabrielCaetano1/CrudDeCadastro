@@ -1,10 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import pg from 'pg';
 import userRoutes from './app/routes/userRoutes.js';
 
 dotenv.config()
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use('/user', userRoutes);
 
@@ -32,6 +34,6 @@ async function connectDb() {
 
 connectDb().then(()=>{
     app.listen(DOOR, () => {
-        console.log(`O servidor está rodando em: http://localhost:${DOOR}`); 
+        console.log(`O servidor está rodando em: http://localhost:${DOOR}/user`); 
     })
 })
