@@ -29,15 +29,15 @@ class userRepository{
         }
     }
 
-    async deleteUser(name, email) {
+    async deleteUser(id) {
         try {
-            const userExists = await prisma.user.findUnique({where: {name, email}});
+            const userExists = await prisma.user.findUnique({where: { id: Number(id) }}); //o Number é pra garantir que é um inteiro e não uma string
             if (userExists === null) {
                 throw new Error('Repository: ConflictError - Usuário não existe ')
             };
-            await prisma.user.delete({where:{name, email}});
-            const message = {message: 'Usuário Deletado com sucesso!'};
-            return message
+
+            await prisma.user.delete({where:{ id }});
+            return {message: 'Usuário Deletado com sucesso!'}
             
         } catch (error) {
             console.log('Repository: Erro ao deletar usuário! ', error);

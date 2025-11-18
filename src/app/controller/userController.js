@@ -33,12 +33,12 @@ class userController{
 
     async deleteController(req, res) {
         try {
-            const {name, email} = req.body;
-            if (name === null || email === null) {
-                return res.status(400).json({message: 'Nome e Email obrigatórios ao deletar!'})
+            const {id} = req.params;
+            if (id === null || id === undefined) {
+                return res.status(400).json({message: 'Não foi possivel deletar o usuário! ID Obrigatório.'})
             };
-            const user = await deleteUser(name, email);
-            res.status(200).json(user.message)
+            const result = await deleteUser(parseInt(id));
+            res.status(200).json(result.message) //message é necessario para q o front entenda que deu certo
 
         } catch (error) {
             res.status(500).json({
