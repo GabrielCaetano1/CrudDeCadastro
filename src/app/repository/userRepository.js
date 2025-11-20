@@ -3,12 +3,12 @@ import instanciaPrisma from "../../connection/instance.js";
 const prisma = instanciaPrisma.getConnection();
 
 class userRepository{
-    async createUser(name, password, email, birthday) {
+    async createUser(username, password, email, birthday, phone) {
         try {
             const userExists = await prisma.user.findUnique({where: {email}}); //procura o usuário pra ver se ja existe
 
             if (userExists === null) {
-                const create = await prisma.user.create({data: {name, password, email, birthday}});
+                const create = await prisma.user.create({data: {username, password, email, birthday, phone}});
                 return create
             } else {
                 throw new Error('Repository: Falha ao criar usuário!')

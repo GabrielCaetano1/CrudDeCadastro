@@ -6,9 +6,14 @@ const {createUser, showAllUsers, deleteUser} = new userRepository();
 class userController{
     async createController(req, res) {
         try {
-            const {name, password, email, birthday} = req.body;
-            const user = await createUser(name, password, email, birthday);
-            res.status(200).json({message: 'Usuário criado com sucesso!'})
+            const {username, password, email, birthday, phone} = req.body;
+
+            if (!username || !password || !email) {
+                return res.status(400).json({message: 'Parâmetros insuficientes para criar usuário!'})
+            } //manter para garantir que os campos obrigatórios estão sendo enviados
+
+            const user = await createUser(username, password, email, birthday, phone);
+            res.status(200).json({message: 'Usuário criado com sucesso!'}) //pode colocar um "data: user" bem aqui pra ver se deu certo
             
         } catch (error) {
             res.status(500).json({
