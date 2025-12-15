@@ -6,6 +6,7 @@ const controller = new userController;
 
 userRoutes.post('/cadastrar', controller.createController);
 userRoutes.get('/buscarTodos', controller.showController);
+userRoutes.patch('/atualizarUsuario/:id', controller.updateController);
 userRoutes.delete('/deletarUsuario/:id', controller.deleteController);
 
 export default userRoutes;

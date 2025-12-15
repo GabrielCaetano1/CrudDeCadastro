@@ -3,15 +3,25 @@ import instanciaPrisma from "../../connection/instance.js";
 const prisma = instanciaPrisma.getConnection();
 
 class userRepository{
-    async createUser(username, password, email, birthday, phone) {
+    async createUser(data) {
         try {
-            const userExists = await prisma.user.findUnique({where: {email}}); //procura o usuário pra ver se ja existe
+            const userExists = await prisma.user.findUnique({where: {email: data.email}}); //procura o usuário pra ver se ja existe
+            if (!userExists) {
+                const {username, password, email, birthday, phone} = data;
 
-            if (userExists === null) {
-                const create = await prisma.user.create({data: {username, password, email, birthday, phone}});
+                const create = prisma.user.create({
+                    data: {
+                        username,
+                        password,
+                        email,
+                        birthday: new Date(birthday),
+                        phone
+                    }
+                });
+                
                 return create
             } else {
-                throw new Error('Repository: Falha ao criar usuário!')
+                throw new Error('Repository: O email inserido já está em uso!')
             }
 
         } catch (error) {
@@ -29,10 +39,34 @@ class userRepository{
         }
     }
 
+    async updateUser(id, data) {
+        try {
+            const userExists = await prisma.user.findUnique({where: { id: Number(id) }}); //o Number é pra garantir que é um inteiro e não uma string
+            if (!userExists) {
+                throw new Error('Repository: ConflictError - Usuário não existe ')
+            };
+
+            const cleanData = Object.fromEntries(
+                Object.entries(data).filter(([_, value]) => value !== "" && value !== null && value !== undefined)
+            );
+
+            const updateUser = prisma.user.update(
+                {
+                    where:{ id },
+                    data: cleanData
+                });
+            return updateUser
+        } catch (error) {
+            console.log('Repository: Erro ao atualizar usuário! ', error.message);
+            // throw error;
+        }
+    }
+
+
     async deleteUser(id) {
         try {
             const userExists = await prisma.user.findUnique({where: { id: Number(id) }}); //o Number é pra garantir que é um inteiro e não uma string
-            if (userExists === null) {
+            if (!userExists) {
                 throw new Error('Repository: ConflictError - Usuário não existe ')
             };
 
